@@ -36,7 +36,7 @@ try {
 // })()
 
 app.use(session({
-  secret: '7843fkdandfnfjknfw4fnsfn43knjnnjfekd',
+  secret: process.env.SESS_SECRET,
   resave: false,
   saveUninitialized: true,
   store: store,
@@ -64,6 +64,6 @@ app.use(AuthRoute);
 
 // store.sync();
 
-app.listen(5000, ()=> {
+app.listen(process.env.APP_PORT, ()=> {
     console.log('Server Up And Running...')
 });
