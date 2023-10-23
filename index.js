@@ -48,7 +48,7 @@ app.use(session({
 
 app.use(cors({
     credentials: true,
-    origin: 'https://api-absensi-indol.vercel.app'
+    origin: 'http://localhost:5173'
 }));
 app.use(cookieParser());
 app.use(express.json());  
