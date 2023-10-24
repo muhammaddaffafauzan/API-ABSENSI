@@ -42,7 +42,6 @@ app.use(session({
   store: store,
   cookie: {
     secure: 'auto',
-    maxAge: null
   }
 }));
 
