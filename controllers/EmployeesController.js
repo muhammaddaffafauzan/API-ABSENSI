@@ -72,7 +72,8 @@ export const saveEmployeeAndUser = async(req, res)=>{
     if(req.files === null) return res.status(400).json({msg: "No File Uploaded"});
     const nip = req.body.nip;
     const nama = req.body.nama;
-    const tmp = req.body.tmp_tgl_lahir;
+    const kota =  req.body.kota;
+    const tmp = req.body.tgl_lahir;
     const jk = req.body.jenis_kelamin;
     const agama = req.body.agama;
     const alamat = req.body.alamat;
@@ -84,7 +85,7 @@ export const saveEmployeeAndUser = async(req, res)=>{
     const ext = path.extname(file.name);
     const fileName = file.md5 + ext;
     const url = `${req.protocol}://${req.get("host")}/images/${fileName}`;
-    const allowedType = ['.png', '.jpg', 'jpeg'];
+    const allowedType = ['.png', '.jpg', '.jpeg'];
 
     if(!allowedType.includes(ext.toLocaleLowerCase())) return res.status(422).json({msg: "Invalid Image"});
     if(fileSize > 5000000) return res.status(422).json({msg: "Image must be less than 5MB"});
@@ -103,7 +104,8 @@ export const saveEmployeeAndUser = async(req, res)=>{
          await Employee.create({
            nip: nip,
             nama: nama,
-             tmp_tgl_lahir: tmp,
+            kota: kota,
+             tgl_lahir: tmp,
               jenis_kelamin: jk,
                agama: agama,
                 alamat: alamat,
@@ -115,7 +117,7 @@ export const saveEmployeeAndUser = async(req, res)=>{
         });
         res.status(201).json({msg: "register dan create data karyawan berhasil"});
     } catch (error) {
-        console.log(error)
+        res.status(500).json({msg: error.message});
     }
 }
 
@@ -146,6 +148,7 @@ export const updateEmployee = async(req, res)=>{
     }
     const nip = req.body.nip;
     const nama = req.body.nama;
+    const kota =  req.body.kota;
     const tmp = req.body.tmp_tgl_lahir;
     const jk = req.body.jenis_kelamin;
     const agama = req.body.agama;
@@ -159,7 +162,8 @@ export const updateEmployee = async(req, res)=>{
         await Employee.update({
             nip: nip,
             nama: nama,
-             tmp_tgl_lahir: tmp,
+            kota: kota,
+             tgl_lahir: tmp,
               jenis_kelamin: jk,
                agama: agama,
                 alamat: alamat,

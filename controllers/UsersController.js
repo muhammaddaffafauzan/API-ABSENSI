@@ -53,7 +53,8 @@ export const updateUsers = async(req, res) => {
     if (password === "" || password === null) {
         hashPassword = user.pas
     }else{
-        hashPassword = await argon2.hash(password);
+        const salt = await bcryptjs.genSalt();
+        hashPassword = await bcryptjs.hash(password, salt);
     }
     if(password !== confPassword) return res.status(400).json({msg: "Password dan ConfirmPassword Tidak Cocok"});
     try {
