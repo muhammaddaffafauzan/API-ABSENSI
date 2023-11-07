@@ -3,8 +3,10 @@ import Company from "../models/CompanyModel.js";
 
 export const getCompany = async(req, res) => {
     try {
-        const response = await Company.findAll();
-        res.status(200).json(response);
+      const company = await Company.findOne({
+        limit: 1,
+    });
+        res.status(200).json(company);
     } catch (error) {
         res.status(500).json({msg: error.message});
     }

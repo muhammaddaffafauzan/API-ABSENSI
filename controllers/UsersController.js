@@ -51,10 +51,10 @@ export const updateUsers = async(req, res) => {
     const {name, email, password, confPassword} = req.body;
     let hashPassword;
     if (password === "" || password === null) {
-        hashPassword = user.pas
+        hashPassword = user.password
     }else{
         const salt = await bcryptjs.genSalt();
-        hashPassword = await bcryptjs.hash(password, salt);
+        hashPassword = await bcryptjs.hash(password     , salt);
     }
     if(password !== confPassword) return res.status(400).json({msg: "Password dan ConfirmPassword Tidak Cocok"});
     try {
@@ -87,7 +87,8 @@ export const updatePassUser = async(req, res) => {
     if (password === "" || password === null) {
         hashPassword = user.pas
     }else{
-        hashPassword = await argon2.hash(password);
+        const salt = await bcryptjs.genSalt();
+        hashPassword = await bcryptjs.hash(password, salt);
     }
     if(password !== confPassword) return res.status(400).json({msg: "Password dan ConfirmPassword Tidak Cocok"});
     try {
