@@ -16,8 +16,9 @@ export const createCompany = async(req, res) => {
     await Company.create({
        nama: req.body.nama,
        alamat: req.body.alamat,
-       latitude: req.body.latitude,
        longitude: req.body.longitude,
+       latitude: req.body.latitude,
+       radius: req.body.radius,
        jam_buka: req.body.jam_buka,
        jam_tutup: req.body.jam_tutup,
        status: req.body.status
@@ -35,8 +36,9 @@ export const updateCompany = async(req, res) => {
     await Company.update({
       nama: req.body.nama,
       alamat: req.body.alamat,
-      latitude: req.body.latitude,
       longitude: req.body.longitude,
+      latitude: req.body.latitude,
+      radius: req.body.radius,
       jam_buka: req.body.jam_buka,
       jam_tutup: req.body.jam_tutup,
       status: req.body.status
