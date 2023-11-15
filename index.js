@@ -46,7 +46,7 @@ app.use(session({
 }));
 
 app.use(cors({
-  origin: 'https://api-absensi-omega.vercel.app', // Ganti dengan domain Vercel Anda
+  origin: 'http://localhost:5173', // Ganti dengan domain Vercel Anda
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 204,
