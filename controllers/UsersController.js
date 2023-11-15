@@ -48,13 +48,13 @@ export const updateUsers = async(req, res) => {
           }
     });
     if(!user) return res.status(404).json({msg: "user tidak ditemukan"});
-    const {name, email, password, confPassword} = req.body;
+    const {name, email, password, confPassword, role} = req.body;
     let hashPassword;
     if (password === "" || password === null) {
         hashPassword = user.password
     }else{
         const salt = await bcryptjs.genSalt();
-        hashPassword = await bcryptjs.hash(password     , salt);
+        hashPassword = await bcryptjs.hash(password, salt);
     }
     if(password !== confPassword) return res.status(400).json({msg: "Password dan ConfirmPassword Tidak Cocok"});
     try {
@@ -62,7 +62,7 @@ export const updateUsers = async(req, res) => {
             name: name,
             email: email,
             password: hashPassword,
-            role: 'admin'
+            role: role
         },{
             where: {
                id: user.id

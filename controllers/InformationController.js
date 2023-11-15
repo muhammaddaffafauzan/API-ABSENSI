@@ -59,7 +59,7 @@ export const sendInformation = async(req, res) =>{
     const ext = path.extname(file.name);
     const fileName = file.md5 + ext;
     const url = `${req.protocol}://${req.get("host")}/images/${fileName}`;
-    const allowedType = ['.png', '.jpg', 'jpeg'];
+    const allowedType = ['.png', '.jpg', '.jpeg', '.pdf'];
 
     if(!allowedType.includes(ext.toLocaleLowerCase())) return res.status(422).json({msg: "Invalid Image"});
     if(fileSize > 5000000) return res.status(422).json({msg: "Image must be less than 5MB"});
