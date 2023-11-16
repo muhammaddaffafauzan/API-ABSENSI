@@ -42,8 +42,11 @@ app.use(session({
   store: store,
   cookie: {
     secure: 'auto',
-  }
+    sameSite: 'None',
+    httpOnly: true,
+  },
 }));
+
 
 app.use(cors({
   origin: 'http://localhost:5173', // Ganti dengan domain Vercel Anda
