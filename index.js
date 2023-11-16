@@ -35,6 +35,7 @@ try {
 //     await db.sync();
 // })()
 
+// Konfigurasi sesi di server
 app.use(session({
   secret: process.env.SESS_SECRET,
   resave: false,
@@ -48,12 +49,16 @@ app.use(session({
 }));
 
 
+
+// Tambahkan ini pada konfigurasi CORS di server
 app.use(cors({
-  origin: 'http://localhost:5173', // Ganti dengan domain Vercel Anda
+  origin: 'http://localhost:5173', // Ganti dengan domain Vue.js Anda
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 204,
+  exposedHeaders: ['set-cookie'], // Tambahkan ini untuk mengizinkan set-cookie header
 }));
+
 app.use(cookieParser());
 app.use(express.json());  
 app.use(FileUpload())
