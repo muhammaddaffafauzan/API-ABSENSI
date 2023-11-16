@@ -60,6 +60,7 @@ app.use(PresenceRoute);
 app.use(PositionRoute);
 app.use(CompanyRoute);
 app.use(AuthRoute);
+app.use(cors());
 
 // store.sync();
 
