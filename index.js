@@ -46,8 +46,10 @@ app.use(session({
 }));
 
 app.use(cors({
-    credentials: true,
-    origin: 'http://localhost:5173' 
+  origin: 'http://localhost:5173', // Ganti dengan domain Vercel Anda
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204,
 }));
 app.use(cookieParser());
 app.use(express.json());  

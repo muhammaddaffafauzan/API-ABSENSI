@@ -20,7 +20,7 @@ const Employee = db.define('Employee',{
     jenis_kelamin: DataTypes.STRING,
     agama: DataTypes.STRING,
     alamat: DataTypes.TEXT,
-    no_hp: DataTypes.INTEGER,
+    no_hp: DataTypes.STRING,
     jabatan: DataTypes.STRING,
     image: DataTypes.STRING,
     url: DataTypes.STRING,
