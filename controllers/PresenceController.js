@@ -85,7 +85,7 @@ export const savePresence = async(req, res) =>{
         console.log(error)
     }
 }
-export const outPresence = async(req, res) => {
+export const outPresence = async (req, res) => {
     const userId = req.userId; // Mengambil userId dari parameter URL
     const tgl_absen = req.body.tgl_absen; // Mengambil tgl_absen dari body request
   
@@ -108,15 +108,51 @@ export const outPresence = async(req, res) => {
       // Misalnya, mengupdate jam_masuk dan jam_pulang
       presenceRecordToUpdate.pulang = req.body.pulang;
   
-      // Menyimpan perubahan ke dalam database
-      await presenceRecordToUpdate.save();
+      // Menangani file yang diunggah
+      if (req.files && req.files.fileOut) {
+        const file = req.files.fileOut;
+        const fileSize = file.data.length;
+        const ext = path.extname(file.name);
+        const fileName = file.md5 + ext;
   
-      res.status(200).json({msg: "anda telah pulang"});
+        const allowedType = ['.png', '.jpg', 'jpeg'];
+        if (!allowedType.includes(ext.toLocaleLowerCase())) {
+          return res.status(422).json({ msg: 'Invalid Image' });
+        }
+  
+        if (fileSize > 5000000) {
+          return res.status(422).json({ msg: 'Image must be less than 5MB' });
+        }
+  
+        file.mv(`./public/images/${fileName}`, async (err) => {
+          if (err) {
+            console.error('Gagal menyimpan file:', err.message);
+            return res.status(500).json({ msg: 'Gagal menyimpan file' });
+          }
+  
+          // Update kolom imageOut dan urlOut pada record Presence
+          presenceRecordToUpdate.imageOut = fileName;
+          presenceRecordToUpdate.urlOut = `${req.protocol}://${req.get(
+            'host'
+          )}/images/${fileName}`;
+  
+          // Menyimpan perubahan ke dalam database
+          await presenceRecordToUpdate.save();
+  
+          res.status(200).json({ msg: 'anda telah pulang' });
+        });
+      } else {
+        // Jika tidak ada file yang diunggah, hanya melakukan update kolom pulang
+        await presenceRecordToUpdate.save();
+        res.status(200).json({ msg: 'anda telah pulang' });
+      }
     } catch (error) {
       console.error('Gagal mengambil atau mengupdate data Presence:', error);
-      res.status(500).json({ error: 'Gagal mengambil atau mengupdate data Presence' });
+      res
+        .status(500)
+        .json({ error: 'Gagal mengambil atau mengupdate data Presence' });
     }
-  }
+  };
 
 export const deletePresence = (req, res) =>{
 

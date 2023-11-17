@@ -3,6 +3,8 @@ import path from "path";
 import User from "../models/UsersModel.js";
 import bcryptjs from "bcryptjs";
 import fs from "fs";
+import Presence from "../models/PresenceModel.js";
+import Information from "../models/InformationModel.js";
 
 export const getEmployee = async (req, res) => {
   try {
@@ -37,34 +39,42 @@ export const getEmployee = async (req, res) => {
 
 export const getEmployeeById = async (req, res) => {
   try {
-    let response;
-    if (req.role === "admin") {
-      response = await Employee.findOne({
+      const employee = await Employee.findOne({
         include: [
           {
             model: User,
-            attributes: ["name", "email", "role"],
+            attributes: ["id","uuid","name", "email", "role"],
           },
         ],
         where: {
           uuid: req.params.uuid,
         },
       });
-    } else {
-      response = await Employee.findOne({
-        where: {
-          uuid: req.params.uuid,
-          userId: req.userId,
-        },
-        include: [
-          {
-            model: User,
-            attributes: ["name", "email", "role"],
-          },
-        ],
+      const presence = await Presence.findAll({
+        where:{
+          userId: employee.userId
+        }
       });
-    }
-    res.json(response);
+      const informationSick = await Information.findAll({
+        where: {
+          userId: employee.userId,
+          keterangan: "Sakit",
+        },
+      });
+    
+      const informationPermission = await Information.findAll({
+        where: {
+          userId: employee.userId,
+          keterangan: "Izin",
+        },
+      });
+      const responseAll = {
+        employee,
+        presence,
+        informationSick: informationSick,
+        informationPermission: informationPermission,
+      };
+    res.json(responseAll);
   } catch (error) {
     console.log(error);
   }
