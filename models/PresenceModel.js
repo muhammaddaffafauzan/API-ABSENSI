@@ -10,6 +10,8 @@ const Presence = db.define('Presence',{
     pulang: DataTypes.TIME,
     image: DataTypes.STRING,
     url: DataTypes.STRING,
+    imageOut: DataTypes.STRING,
+    urlOut: DataTypes.STRING,
     userId:{
         type: DataTypes.INTEGER,
         validate: {
