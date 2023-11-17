@@ -43,20 +43,13 @@ app.use(session({
   store: store,
   cookie: {
     secure: 'auto',
-    sameSite: 'None',
-    httpOnly: true,
   },
 }));
-
-
 
 // Tambahkan ini pada konfigurasi CORS di server
 app.use(cors({
   origin: 'http://localhost:5173', // Ganti dengan domain Vue.js Anda
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
-  optionsSuccessStatus: 204,
-  exposedHeaders: ['set-cookie'], // Tambahkan ini untuk mengizinkan set-cookie header
 }));
 
 app.use(cookieParser());
