@@ -27,14 +27,6 @@ export const Me = async (req, res) => {
   }
 
   const user = await User.findOne({
-    include: [
-      {
-        model: Employee,
-      },
-      {
-        model: Presence,
-      },
-    ],
     attributes: ["id", "uuid", "name", "email", "role"],
     where: {
       uuid: req.session.userId,
@@ -42,6 +34,18 @@ export const Me = async (req, res) => {
   });
 
   if (!user) return res.status(404).json({ msg: "user tidak ditemukan" });
+
+  const employee = await Employee.findAll({
+    where:{
+      userId: user.id
+    }
+  });
+
+  const presence = await Presence.findAll({
+    where:{
+      userId: user.id
+    }
+  });
 
   const informationSick = await Information.findAll({
     where: {
@@ -58,7 +62,9 @@ export const Me = async (req, res) => {
   });
 
   const response = {
-    user: user,
+    user,
+    employee,
+    presence,
     informationSick: informationSick,
     informationPermission: informationPermission,
   };
