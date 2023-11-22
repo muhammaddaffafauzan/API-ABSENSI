@@ -61,18 +61,19 @@ export const Me = async (req, res) => {
     },
   });
 
-  const response = {
+  // Menggabungkan semua informasi ke dalam satu objek
+  const responseData = {
     user,
     employee,
     presence,
-    informationSick: informationSick,
-    informationPermission: informationPermission,
+    information: {
+      sick: informationSick,
+      permission: informationPermission,
+    },
   };
 
-  res.status(200).json(response);
+  res.status(200).json([responseData]); // Mengirim sebagai satu data array
 };
-
-
 
 
 export const logout = (req, res) => {

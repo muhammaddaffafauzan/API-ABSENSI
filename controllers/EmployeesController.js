@@ -39,46 +39,73 @@ export const getEmployee = async (req, res) => {
 
 export const getEmployeeById = async (req, res) => {
   try {
-      const employee = await Employee.findOne({
-        include: [
-          {
-            model: User,
-            attributes: ["id","uuid","name", "email", "role"],
-          },
-        ],
-        where: {
-          uuid: req.params.uuid,
+    const employee = await Employee.findOne({
+      include: [
+        {
+          model: User,
+          attributes: ["id", "uuid", "name", "email", "role"],
         },
-      });
-      const presence = await Presence.findAll({
-        where:{
-          userId: employee.userId
-        }
-      });
-      const informationSick = await Information.findAll({
-        where: {
-          userId: employee.userId,
-          keterangan: "Sakit",
-        },
-      });
-    
-      const informationPermission = await Information.findAll({
-        where: {
-          userId: employee.userId,
-          keterangan: "Izin",
-        },
-      });
-      const responseAll = {
-        employee,
-        presence,
-        informationSick: informationSick,
-        informationPermission: informationPermission,
-      };
+      ],
+      where: {
+        uuid: req.params.uuid,
+      },
+    });
+
+    if (!employee) {
+      return res.status(404).json({ error: "Pegawai tidak ditemukan" });
+    }
+
+    const presence = await Presence.findAll({
+      where: {
+        userId: employee.userId,
+      },
+    });
+
+    const informationSick = await Information.findAll({
+      where: {
+        userId: employee.userId,
+        keterangan: "Sakit",
+      },
+    });
+
+    const informationPermission = await Information.findAll({
+      where: {
+        userId: employee.userId,
+        keterangan: "Izin",
+      },
+    });
+
+    const responseAll = {
+      id: employee.id,
+      uuid: employee.uuid,
+      name: employee.user.name,
+      email: employee.user.email,
+      role: employee.user.role,
+      nip: employee.nip,
+      nama: employee.nama,
+      kota: employee.kota,
+      tgl_lahir: employee.tgl_lahir,
+      jenis_kelamin: employee.jenis_kelamin,
+      agama: employee.agama,
+      alamat: employee.alamat,
+      no_hp: employee.no_hp,
+      jabatan: employee.jabatan,
+      image: employee.image,
+      url: employee.url,
+      presence: presence,
+      informationSick: informationSick,
+      informationPermission: informationPermission,
+    };
+
     res.json(responseAll);
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    res.status(500).json({ error: "Kesalahan Internal Server", details: error.message });
   }
 };
+
+
+
 export const saveEmployeeAndUser = async (req, res) => {
   //data akun karyawan
   const { username, email, password, confPassword } = req.body;
