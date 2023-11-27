@@ -8,6 +8,8 @@ import Information from "../models/InformationModel.js";
 
 export const getEmployee = async (req, res) => {
   try {
+    let responseAll;
+    let employee;
     let response;
     if (req.role === "admin") {
       response = await Employee.findAll({
@@ -19,19 +21,64 @@ export const getEmployee = async (req, res) => {
         ],
       });
     } else {
-      response = await Employee.findAll({
-        where: {
-          userId: req.userId,
-        },
+      employee = await Employee.findOne({
         include: [
           {
             model: User,
-            attributes: ["name", "email", "role"],
+            attributes: ["id", "uuid", "name", "email", "role"],
           },
         ],
+        where: {
+          userId: req.userId
+        },
       });
+  
+      if (!employee) {
+        return res.status(404).json({ error: "Pegawai tidak ditemukan" });
+      }
+  
+      const presence = await Presence.findAll({
+        where: {
+          userId: employee.userId,
+        },
+      });
+  
+      const informationSick = await Information.findAll({
+        where: {
+          userId: employee.userId,
+          keterangan: "Sakit",
+        },
+      });
+  
+      const informationPermission = await Information.findAll({
+        where: {
+          userId: employee.userId,
+          keterangan: "Izin",
+        },
+      });
+       responseAll = {
+        id: employee.id,
+        uuid: employee.uuid,
+        name: employee.user.name,
+        email: employee.user.email,
+        role: employee.user.role,
+        nip: employee.nip,
+        nama: employee.nama,
+        kota: employee.kota,
+        tgl_lahir: employee.tgl_lahir,
+        jenis_kelamin: employee.jenis_kelamin,
+        agama: employee.agama,
+        alamat: employee.alamat,
+        no_hp: employee.no_hp,
+        jabatan: employee.jabatan,
+        image: employee.image,
+        url: employee.url,
+        presence: presence,
+        informationSick: informationSick,
+        informationPermission: informationPermission,
+      };
     }
-    res.status(200).json(response);
+    res.status(200).json(response || [responseAll]);
   } catch (error) {
     console.log(error);
   }

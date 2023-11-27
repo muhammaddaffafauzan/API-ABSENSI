@@ -5,6 +5,7 @@ import path from "path";
 
 export const getInformation = async(req, res) =>{
     try {
+        let responseAll;
         let response;
         if(req.role === 'admin')
         {
@@ -15,17 +16,25 @@ export const getInformation = async(req, res) =>{
             }]
         });
     }else{
-        response = await Information.findAll({
+        const informationSick = await Information.findAll({
             where: {
-                userId: req.userId
+              userId: req.userId,
+              keterangan: "Sakit",
             },
-            include: [{
-            model: User,
-            attributes: ['name']
-            }]
-        });
+          });
+      
+          const informationPermission = await Information.findAll({
+            where: {
+              userId: req.userId,
+              keterangan: "Izin",
+            },
+          });
+          responseAll = {
+            informationSick: informationSick,
+            informationPermission: informationPermission,
+          }
         }
-        res.status(200).json(response);
+        res.status(200).json(response || responseAll);
     } catch (error) {
         res.status(500).json({msg: error.message});
     }
