@@ -34,7 +34,7 @@ export const getInformation = async(req, res) =>{
             informationPermission: informationPermission,
           }
         }
-        res.status(200).json(response || responseAll);
+        res.status(200).json(response || [responseAll]);
     } catch (error) {
         res.status(500).json({msg: error.message});
     }

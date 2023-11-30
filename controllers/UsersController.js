@@ -113,6 +113,51 @@ export const updatePassUser = async(req, res) => {
     }
 }
 
+export const requestPasswordReset = async (req, res) => {
+    const { email } = req.body;
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+        return res.status(404).json({ msg: "Pengguna tidak ditemukan" });
+    }
+
+    const resetToken = crypto.randomBytes(20).toString('hex');
+    // Atur validitas token (misalnya, 1 jam)
+    const resetTokenExpires = Date.now() + 3600000;
+
+    await User.update({ resetToken, resetTokenExpires }, { where: { email } });
+
+    // Kirim email dengan resetToken (Implementasikan logika nodemailer atau layanan email lainnya di sini)
+
+    res.status(200).json({ msg: "Email reset password telah dikirim" });
+};
+
+export const resetPassword = async (req, res) => {
+    const { resetToken, newPassword } = req.body;
+    const user = await User.findOne({
+        where: {
+            resetToken,
+            resetTokenExpires: {
+                [Op.gt]: Date.now() // Op.gt adalah operator 'greater than'
+            }
+        }
+    });
+
+    if (!user) {
+        return res.status(400).json({ msg: "Token tidak valid atau telah kadaluwarsa" });
+    }
+
+    const salt = await bcryptjs.genSalt();
+    const hashedPassword = await bcryptjs.hash(newPassword, salt);
+
+    await User.update({ password: hashedPassword, resetToken: null, resetTokenExpires: null }, {
+        where: { id: user.id }
+    });
+
+    res.status(200).json({ msg: "Password telah diperbarui" });
+};
+
+
 export const deleteUsers = async(req, res) => {
     const user = await User.findOne({
         where: {
