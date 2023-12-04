@@ -1,10 +1,10 @@
 import { Sequelize } from "sequelize";
 import db from "../config/Database.js";
 
-const {DataTypes} = Sequelize;
+const { DataTypes } = Sequelize;
 
-const User = db.define('users',{
-    uuid:{
+const User = db.define('users', {
+    uuid: {
         type: DataTypes.STRING,
         defaultValue: DataTypes.UUIDV4,
         allowNull: false,
@@ -12,7 +12,7 @@ const User = db.define('users',{
             notEmpty: true
         }
     },
-    name:{
+    name: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
@@ -20,31 +20,34 @@ const User = db.define('users',{
             len: [3, 100]
         }
     },
-    email:{
+    email: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true, // Pastikan email adalah unik
         validate: {
             notEmpty: true,
             isEmail: true
         }
     },
-    password:{
+    password: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
             notEmpty: true,
         }
     },
-    role:{
+    role: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
             notEmpty: true,
         }
     },
-},{
+    refreshToken: {
+        type: DataTypes.STRING,
+    },
+}, {
     freezeTableName: true
 });
-
 
 export default User;

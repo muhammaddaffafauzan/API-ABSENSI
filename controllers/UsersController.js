@@ -41,73 +41,86 @@ export const createUsers = async (req, res) => {
     res.status(400).json({ msg: error.message });
   }
 };
+// error update
 export const updateUsers = async (req, res) => {
-  const user = await User.findOne({
-    where: {
-      uuid: req.params.uuid,
-    },
-  });
-  if (!user) return res.status(404).json({ msg: "user tidak ditemukan" });
-  const { name, email, password, confPassword, role } = req.body;
-  let hashPassword;
-  if (password === "" || password === null) {
-    hashPassword = user.password;
-  } else {
-    const salt = await bcryptjs.genSalt();
-    hashPassword = await bcryptjs.hash(password, salt);
-  }
-  if (password !== confPassword)
-    return res
-      .status(400)
-      .json({ msg: "Password dan ConfirmPassword Tidak Cocok" });
   try {
-    await User.update(
-      {
-        name: name,
-        email: email,
-        password: hashPassword,
-        role: role,
+    const user = await User.findOne({
+      attributes: ["id", "uuid", "name", "email", "role"],
+      where: {
+        uuid: req.params.uuid,
       },
-      {
-        where: {
-          id: user.id,
-        },
-      }
-    );
-    res.status(200).json({ msg: "Users Updated" });
+    });
+
+    if (!user) {
+      return res.status(404).json({ msg: "User tidak ditemukan" });
+    }
+
+    const { name, email, password, confPassword, role } = req.body;
+    let updateFields = {};
+
+    if (name) {
+      updateFields.name = name;
+    }
+
+    if (email) {
+      updateFields.email = email;
+    }
+
+    if (password && password !== confPassword) {
+      return res.status(400).json({ msg: "Password dan ConfirmPassword tidak cocok" });
+    }
+
+    if (password) {
+      const salt = await bcryptjs.genSalt();
+      updateFields.password = await bcryptjs.hash(password, salt);
+    }
+
+    if (role) {
+      updateFields.role = role;
+    }
+
+    await User.update(updateFields, {
+      where: {
+        id: user.id,
+      },
+    });
+
+    res.status(200).json({ msg: "User berhasil diperbarui" });
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    console.error("Error updating user:", error);
+    res.status(500).json({ msg: "Internal Server Error" });
   }
 };
-
 export const updatePassUser = async (req, res) => {
-  const user = await User.findOne({
-    where: {
-      id: req.userId,
-    },
-  });
-
-  if (!user) return res.status(404).json({ msg: "user tidak ditemukan" });
-  const { password, confPassword } = req.body;
-  let hashPassword;
-  if (password === "" || password === null) {
-    hashPassword = user.pas;
-  } else {
-    const salt = await bcryptjs.genSalt();
-    hashPassword = await bcryptjs.hash(password, salt);
-  }
-  if (password !== confPassword)
-    return res
-      .status(400)
-      .json({ msg: "Password dan ConfirmPassword Tidak Cocok" });
   try {
+    const user = await User.findOne({
+      where: {
+        id: req.userId,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ msg: "User tidak ditemukan" });
+    }
+
+    const { password, confPassword } = req.body;
+    let hashPassword;
+
+    if (password === "" || password === null) {
+      hashPassword = user.password;
+    } else {
+      const salt = await bcryptjs.genSalt();
+      hashPassword = await bcryptjs.hash(password, salt);
+    }
+
+    if (password !== confPassword) {
+      return res.status(400).json({ msg: "Password dan ConfirmPassword tidak cocok" });
+    }
+
     if (req.role === "user") {
       await User.update(
         {
-          name: user.name,
-          email: user.email,
           password: hashPassword,
-          role: "user",
         },
         {
           where: {
@@ -115,14 +128,16 @@ export const updatePassUser = async (req, res) => {
           },
         }
       );
+      res.status(200).json({ msg: "Password user berhasil diperbarui" });
     } else {
-      res.status(400).json({ msg: "ini untuk user mengubah password" });
+      res.status(400).json({ msg: "Operasi ini hanya untuk user mengubah password" });
     }
-    res.status(200).json({ msg: "Users Updated" });
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    console.error(error);
+    res.status(500).json({ msg: "Internal Server Error" });
   }
 };
+
 
 // export const resetPassword = async (req, res) => {
 //   const { email } = req.body;
