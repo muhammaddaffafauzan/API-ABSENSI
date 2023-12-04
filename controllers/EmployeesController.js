@@ -151,8 +151,6 @@ export const getEmployeeById = async (req, res) => {
   }
 };
 
-
-
 export const saveEmployeeAndUser = async (req, res) => {
   //data akun karyawan
   const { username, email, password, confPassword } = req.body;
