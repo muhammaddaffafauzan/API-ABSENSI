@@ -28,7 +28,7 @@ try {
 // })()
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'https://absensi-online-mu.vercel.app',
   credentials: true,
 }));
 
