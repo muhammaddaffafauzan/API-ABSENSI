@@ -11,7 +11,6 @@ import PresenceRoute from "./routes/PresenceRoute.js";
 import PositionRoute from "./routes/PositionRoute.js";
 import CompanyRoute  from "./routes/CompanyRoute.js";
 import db from "./config/Database.js";
-import fileUpload from "express-fileupload";
 
 dotenv.config();
 
