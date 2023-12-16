@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import UserRoute from "./routes/UserRoute.js";
-import FileUpload from "express-fileupload";
+import multer from "multer";
 import dotenv from "dotenv";
 import EmployeesRoute from "./routes/EmployeesRoute.js"
 import AuthRoute from "./routes/AuthRoute.js";
@@ -23,6 +23,17 @@ try {
   console.log(error);
 }
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/images'); // Ubah ke "public/images" atau direktori yang diinginkan
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
 // (async()=>{
 //     await db.sync();
 // })()
@@ -33,7 +44,7 @@ app.use(cors({
 }));
 
 app.use(express.json());  
-app.use(FileUpload())
+app.use(upload.single('file'));
 app.use(express.static("public"));
 app.use(UserRoute);
 app.use(EmployeesRoute);
