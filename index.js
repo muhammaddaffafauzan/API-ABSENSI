@@ -3,7 +3,6 @@ import cors from "cors";
 import UserRoute from "./routes/UserRoute.js";
 import FileUpload from "express-fileupload";
 import dotenv from "dotenv";
-import AWS from "aws-sdk";
 import EmployeesRoute from "./routes/EmployeesRoute.js"
 import AuthRoute from "./routes/AuthRoute.js";
 import InformationRoute from "./routes/InformationRoute.js";
@@ -19,7 +18,6 @@ const app = express();
 try {
   await db.authenticate();
   console.log('Database Connected...');
-  // isi table yang ingin di singkronkan di bawah:
 } catch (error) {
   console.log(error);
 }
@@ -27,13 +25,6 @@ try {
 // (async()=>{
 //     await db.sync();
 // })()
-
-AWS.config.update({
-  region: process.env.AWS_REGION,
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  sessionToken: process.env.AWS_SESSION_TOKEN
-});
 
 app.use(cors({
   origin: 'https://absensi-online-mu.vercel.app',
