@@ -1,6 +1,4 @@
 import Employee from "../models/EmployeesModel.js";
-import Information from "../models/InformationModel.js";
-import Presence from "../models/PresenceModel.js";
 import User from "../models/UsersModel.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
